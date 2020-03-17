@@ -66,6 +66,7 @@ platform_do_upgrade() {
 	avm,fritzrepeater-3000 |\
 	cilab,meshpoint-one |\
 	engenius,eap2200 |\
+	mikrotik,rb450gx4 |\
 	mobipromo,cm520-79f |\
 	qxwlan,e2600ac-c2)
 		nand_do_upgrade "$1"

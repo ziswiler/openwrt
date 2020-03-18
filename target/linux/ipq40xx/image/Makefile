@@ -521,10 +521,9 @@ define Device/MikrotikNAND
 	DEVICE_VENDOR := MikroTik
 	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
 	PLATFORM := mikrotik-ipq4xxx
-	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
+	KERNEL = kernel-bin | lzma | fit lzma $$(DTS_DIR)/$$(DEVICE_DTS).dtb | ipq-aux-loader-kernel elf
 	IMAGES := sysupgrade.bin
-	IMAGE/sysupgrade.bin/squashfs := append-kernel | ipq-aux-loader-kernel ubi | \
-			sysupgrade-tar kernel=$$$$@ | append-metadata
+	IMAGE/sysupgrade.bin := append-kernel | sysupgrade-tar kernel=$$$$@ | append-metadata
 endef
 
 define Device/mikrotik_rb450gx4

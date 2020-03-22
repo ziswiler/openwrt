@@ -520,10 +520,10 @@ define Device/MikrotikNAND
 	$(call Device/FitImageLzma)
 	DEVICE_VENDOR := MikroTik
 	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
+	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
 	PLATFORM := mikrotik-ipq4xxx
-	KERNEL = kernel-bin | lzma | fit lzma $$(DTS_DIR)/$$(DEVICE_DTS).dtb | ipq-aux-loader-kernel elf
 	IMAGES := sysupgrade.bin
-	IMAGE/sysupgrade.bin := append-kernel | sysupgrade-tar kernel=$$$$@ | append-metadata
+	IMAGE/sysupgrade.bin := append-kernel | ipq-aux-loader-kernel ubi | sysupgrade-tar kernel=$$$$@ | append-metadata
 endef
 
 define Device/mikrotik_rb450gx4

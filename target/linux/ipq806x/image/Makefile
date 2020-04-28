@@ -31,6 +31,24 @@ define Device/LegacyImage
 	KERNEL_NAME := zImage
 endef
 
+define Build/ipq-aux-loader-common
+	rm -rf $@.src
+	$(MAKE) -C ipq-aux-loader \
+		PKG_BUILD_DIR="$@.src" \
+		TARGET_DIR="$(dir $@)" LOADER_NAME="$(notdir $@)" \
+		TEXT_BASE2="0x00000000" \
+		BOARD="$(BOARDNAME)" PLATFORM="$(PLATFORM)" \
+		BLOCKSIZE="$(BLOCKSIZE)" PAGESIZE="$(PAGESIZE)" \
+		UART="$(AUX_LOADER_UART)"	\
+		$(1) LOADER_TYPE=$(2) compile loader.$(2)
+	mv "$@.$(2)" "$@"
+	rm -rf $@.src
+endef
+
+define Build/ipq-aux-loader-kernel
+	$(call Build/ipq-aux-loader-common,LOADER_DATA="$@",$(1))
+endef
+
 define Device/FitImage
 	KERNEL_SUFFIX := -fit-uImage.itb
 	KERNEL = kernel-bin | gzip | fit gzip $$(DTS_DIR)/$$(DEVICE_DTS).dtb
@@ -139,6 +157,27 @@ define Device/nec_wg2600hp
 	DEVICE_PACKAGES := ath10k-firmware-qca99x0-ct
 endef
 TARGET_DEVICES += nec_wg2600hp
+
+define Device/MikrotikNAND
+	$(call Device/FitImageLzma)
+	DEVICE_VENDOR := MikroTik
+	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
+	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
+	PLATFORM := mikrotik-ipq806x
+	IMAGES := sysupgrade.bin
+	IMAGE/sysupgrade.bin := append-kernel | ipq-aux-loader-kernel ubi | sysupgrade-tar kernel=$$$$@ | append-metadata
+endef
+
+define Device/mikrotik_rb3011uias
+	$(call Device/MikrotikNAND)
+	DEVICE_MODEL := RB3011UiAS
+	SOC := qcom-ipq8064
+	BLOCKSIZE := 256k
+	PAGESIZE := 4096
+	AUX_LOADER_UART := 1
+	DEVICE_PACKAGES := kmod-gpio-beeper
+endef
+TARGET_DEVICES += mikrotik_rb3011uias
 
 define Device/netgear_d7800
 	$(call Device/DniImage)

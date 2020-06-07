@@ -39,7 +39,7 @@ mikrotik,rb3011uias)
 	ucidef_add_switch "switch0" \
 		"0@eth0" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan" "6@eth2"
 	ucidef_add_switch "switch1" \
-		"1:lan" "2:lan" "3:lan" "4:lan" "5:lan" "6@eth3"
+		"0@eth3" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan"
 	;;
 nec,wg2600hp)
 	ucidef_add_switch "switch0" \

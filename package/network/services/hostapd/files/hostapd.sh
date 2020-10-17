@@ -99,6 +99,7 @@ hostapd_common_add_device_config() {
 	config_add_string require_mode
 	config_add_boolean legacy_rates
 	config_add_int cell_density
+	config_add_boolean vendor_vht
 
 	config_add_string acs_chan_bias
 	config_add_array hostapd_options
@@ -115,7 +116,7 @@ hostapd_prepare_device_config() {
 	local base_cfg=
 
 	json_get_vars country country_ie beacon_int:100 dtim_period:2 doth require_mode legacy_rates \
-		acs_chan_bias local_pwr_constraint spectrum_mgmt_required airtime_mode cell_density
+		acs_chan_bias local_pwr_constraint spectrum_mgmt_required airtime_mode cell_density vendor_vht
 
 	hostapd_set_log_options base_cfg
 
@@ -125,6 +126,7 @@ hostapd_prepare_device_config() {
 	set_default legacy_rates 0
 	set_default airtime_mode 0
 	set_default cell_density 0
+	set_default vendor_vht 1
 
 	[ -n "$country" ] && {
 		append base_cfg "country_code=$country" "$N"
@@ -152,6 +154,9 @@ hostapd_prepare_device_config() {
 			ac) append base_cfg "require_vht=1" "$N";;
 		esac
 	fi
+
+	[ "$hwmode" = "g" -a -n "$vendor_vht" ] && append base_cfg "vendor_vht=$vendor_vht" "$N"
+
 	case "$hwmode" in
 		b)
 			if [ "$cell_density" -eq 1 ]; then

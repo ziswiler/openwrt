@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "ar9344_mikrotik_routerboard-2011.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	compatible = "mikrotik,routerboard-2011uias-2hnd", "qca,ar9344";
+	model = "MikroTik RouterBOARD 2011UiAS-2HnD";
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		gpio_usb_detect {
+			gpio-export,name = "usb:detect";
+			gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
+		};
+
+		sfp_los: gpio_sfp_los {
+			gpio-export,name = "sfp:los";
+			gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	i2c: i2c {
+		compatible = "i2c-gpio";
+		sda-gpios = <&gpio 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		scl-gpios = <&gpio 21 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+	};
+
+	sfp: sfp {
+		compatible = "sff,sfp";
+		i2c-bus = <&i2c>;
+		los-gpios = <&sfp_los>;
+		/*mod-def0-gpios = <&gpio __ GPIO_ACTIVE_HIGH>;
+		tx-fault-gpios = <&gpio __ GPIO_ACTIVE_HIGH>;
+		tx-disable-gpios = <&gpio __ GPIO_ACTIVE_HIGH>;*/
+	};
+};
+
+&mdio0 {
+	sfp_phy: ethernet-phy@6 {
+		reg = <6>;
+		sfp = <&sfp>;
+	};
+};
+
+&sfp_port {
+	phy-handle = <&sfp_phy>;
+};
+
+&usb {
+	status = "okay";
+};
+
+&usb_phy {
+	status = "okay";
+};
+
+&wmac {
+	status = "okay";
+
+	qca,no-eeprom;
+};

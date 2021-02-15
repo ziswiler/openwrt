@@ -395,14 +395,27 @@
 };
 
 &gmac0 { /* switch0 port 0 */
+	status = "okay";
+	compatible = "qcom,nss-gmac";
+	reg = <0x37000000 0x200000>;
+	interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
+	phy-mode = "rgmii";
+	qcom,id = <0>;
+	qcom,pcs-chanid = <0>;
+	qcom,phy-mdio-addr = <4>;
+	qcom,poll-required = <0>;
+	qcom,rgmii-delay = <1>;
+	qcom,phy_mii_type = <0>;
+	qcom,emulation = <0>;
+	qcom,forced-speed = <1000>;
+	qcom,forced-duplex = <1>;
+	qcom,socver = <0>;
+	qcom,irq = <252>;
 	mdiobus = <&mdio0>;
 	mtd-mac-address = <&hard_config 0x10>;
 	mtd-mac-address-increment = <0>;
-	phy-mode = "rgmii";
 	pinctrl-0 = <&rgmii2_pins>;
 	pinctrl-names = "default";
-	qcom,id = <0>;
-	status = "okay";
 
 	fixed-link {
 		speed = <1000>;
@@ -411,12 +424,25 @@
 };
 
 &gmac1 { /* SFP */
-	mtd-mac-address = <&hard_config 0x10>;
-	mtd-mac-address-increment = <1>;
+	status = "okay";
+	compatible = "qcom,nss-gmac";
+	reg = <0x37200000 0x200000>;
+	interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
 	phy-mode = "sgmii";
 	qcom,id = <1>;
+	qcom,pcs-chanid = <1>;
+	qcom,phy-mdio-addr = <0>; /* none */
+	qcom,poll-required = <0>; /* no polling */
+	qcom,rgmii-delay = <0>;
+	qcom,phy_mii_type = <1>;
+	qcom,emulation = <0>;
+	qcom,forced-speed = <1000>;
+	qcom,forced-duplex = <1>;
+	qcom,socver = <0>;
+	qcom,irq = <255>;
+	mtd-mac-address = <&hard_config 0x10>;
+	mtd-mac-address-increment = <1>;
 	//sfp = <&sfp_gmac1>;
-	status = "okay";
 
 	fixed-link {
 		speed = <1000>;
@@ -425,12 +451,25 @@
 };
 
 &gmac2 { /* switch0 port 6 */
+	status = "okay";
+	compatible = "qcom,nss-gmac";
+	reg = <0x37400000 0x200000>;
+	interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
+	phy-mode = "sgmii";
+	qcom,id = <2>;
+	qcom,pcs-chanid = <2>;
+	qcom,phy-mdio-addr = <0>; /* none */
+	qcom,poll-required = <0>; /* no polling */
+	qcom,rgmii-delay = <0>;
+	qcom,phy_mii_type = <1>;
+	qcom,emulation = <0>;
+	qcom,forced-speed = <1000>;
+	qcom,forced-duplex = <1>;
+	qcom,socver = <0>;
+	qcom,irq = <258>;
 	mdiobus = <&mdio0>;
 	mtd-mac-address = <&hard_config 0x10>;
 	mtd-mac-address-increment = <2>;
-	phy-mode = "sgmii";
-	qcom,id = <2>;
-	status = "okay";
 
 	fixed-link {
 		speed = <1000>;
@@ -439,11 +478,25 @@
 };
 
 &gmac3 { /* switch1 port 0 */
+	status = "okay";
+	compatible = "qcom,nss-gmac";
+	reg = <0x37600000 0x200000>;
+	interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>;
+	phy-mode = "sgmii";
+	qcom,id = <3>;
+	qcom,pcs-chanid = <3>;
+	qcom,phy-mdio-addr = <4>;
+	qcom,poll-required = <0>;
+	qcom,rgmii-delay = <0>;
+	qcom,phy_mii_type = <1>;
+	qcom,emulation = <0>;
+	qcom,forced-speed = <1000>;
+	qcom,forced-duplex = <1>;
+	qcom,socver = <0>;
+	qcom,irq = <261>;
 	mdiobus = <&mdio1>;
 	mtd-mac-address = <&hard_config 0x10>;
 	mtd-mac-address-increment = <3>;
-	phy-mode = "sgmii";
-	qcom,id = <3>;
 	status = "okay";
 
 	fixed-link {

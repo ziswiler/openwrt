@@ -97,8 +97,8 @@ int handle_legacy_header(void *_kernel_data_start, u32 kern_image_len){
 	 ! Not to be confused with an FDT - Flattened Device Tree !
 	 ! MAGIC of FIT == ~MAGIC of FDT !
 */
-#define FIT_KERNEL_NODE_NAME "kernel@1"
-#define FIT_DTB_NODE_NAME "fdt@1"
+#define FIT_KERNEL_NODE_NAME "kernel-1"
+#define FIT_DTB_NODE_NAME "fdt-1"
 int handle_fit_header(void *_kernel_data_start, u32 kern_image_len){
 	void *data = (void*)_kernel_data_start;
 	void *kernel_load = NULL;

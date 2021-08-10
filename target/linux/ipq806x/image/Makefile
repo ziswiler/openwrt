@@ -221,7 +221,7 @@ define Device/MikrotikNAND
 	IMAGE/sysupgrade.bin := append-kernel | ipq-aux-loader-kernel ubi | sysupgrade-tar kernel=$$$$@ | append-metadata
 endef
 
-define Device/mikrotik_rb3011uias
+define Device/mikrotik_rb3011
 	$(call Device/MikrotikNAND)
 	DEVICE_MODEL := RB3011UiAS
 	SOC := qcom-ipq8064
@@ -232,7 +232,7 @@ define Device/mikrotik_rb3011uias
 	AUX_LOADER_RB3011_PREINITS := YES
 	DEVICE_PACKAGES := kmod-gpio-beeper
 endef
-TARGET_DEVICES += mikrotik_rb3011uias
+TARGET_DEVICES += mikrotik_rb3011
 
 define Device/nec_wg2600hp
 	$(call Device/LegacyImage)

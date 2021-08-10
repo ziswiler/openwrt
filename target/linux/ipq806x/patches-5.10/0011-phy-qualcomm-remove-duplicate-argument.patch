@@ -1,0 +1,33 @@
+From 0d811cda22abeeeb8d3412ac17b687764f4b4c9f Mon Sep 17 00:00:00 2001
+Message-Id: <0d811cda22abeeeb8d3412ac17b687764f4b4c9f.1628373723.git.marcel.ziswiler@toradex.com>
+From: Zhang Yunkai <zhang.yunkai@zte.com.cn>
+Date: Fri, 19 Mar 2021 04:36:12 -0700
+Subject: [PATCH] phy: qualcomm: remove duplicate argument
+
+'HSUSB_CTRL_DPSEHV_CLAMP' in 'val' is duplicated.
+
+Signed-off-by: Zhang Yunkai <zhang.yunkai@zte.com.cn>
+Link: https://lore.kernel.org/r/20210319113612.494623-1-zhang.yunkai@zte.com.cn
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+index 9061ece7ff6ab1..bfff0c8c913038 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
++++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+@@ -276,8 +276,8 @@ static int qcom_ipq806x_usb_hs_phy_init(struct phy *phy)
+ 	val = HSUSB_CTRL_DPSEHV_CLAMP | HSUSB_CTRL_DMSEHV_CLAMP |
+ 		HSUSB_CTRL_RETENABLEN  | HSUSB_CTRL_COMMONONN |
+ 		HSUSB_CTRL_OTGSESSVLD_CLAMP | HSUSB_CTRL_ID_HV_CLAMP |
+-		HSUSB_CTRL_DPSEHV_CLAMP | HSUSB_CTRL_UTMI_OTG_VBUS_VALID |
+-		HSUSB_CTRL_UTMI_CLK_EN | HSUSB_CTRL_CLAMP_EN | 0x70;
++		HSUSB_CTRL_UTMI_OTG_VBUS_VALID | HSUSB_CTRL_UTMI_CLK_EN |
++		HSUSB_CTRL_CLAMP_EN | 0x70;
+ 
+ 	/* use core clock if external reference is not present */
+ 	if (!phy_dwc3->xo_clk)
+-- 
+2.26.2
+

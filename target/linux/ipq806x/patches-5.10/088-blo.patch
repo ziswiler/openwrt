@@ -1,0 +1,11 @@
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -1003,7 +1003,7 @@
+ 			tsens_calib: calib@400 {
+ 				reg = <0x400 0xb>;
+ 			};
+-			tsens_backup: backup@410 {
++			tsens_calib_backup: backup@410 {
+ 				reg = <0x410 0xb>;
+ 			};
+ 			speedbin_efuse: speedbin@0c0 {

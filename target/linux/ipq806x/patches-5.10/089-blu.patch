@@ -1,0 +1,34 @@
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -671,31 +671,6 @@
+ 					bias-pull-up;
+ 				};
+ 			};
+-
+-			nand_pins: nand_pins {
+-				mux {
+-					pins = "gpio34", "gpio35", "gpio36",
+-					       "gpio37", "gpio38", "gpio39",
+-					       "gpio40", "gpio41", "gpio42",
+-					       "gpio43", "gpio44", "gpio45",
+-					       "gpio46", "gpio47";
+-					function = "nand";
+-					drive-strength = <10>;
+-					bias-disable;
+-				};
+-
+-				pullups {
+-					pins = "gpio39";
+-					bias-pull-up;
+-				};
+-
+-				hold {
+-					pins = "gpio40", "gpio41", "gpio42",
+-					       "gpio43", "gpio44", "gpio45",
+-					       "gpio46", "gpio47";
+-					bias-bus-hold;
+-				};
+-			};
+ 		};
+ 
+ 		intc: interrupt-controller@2000000 {

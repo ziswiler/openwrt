@@ -1,0 +1,133 @@
+From dd1ebbcf7b609becf40fafc993fc8177934c6d49 Mon Sep 17 00:00:00 2001
+Message-Id: <dd1ebbcf7b609becf40fafc993fc8177934c6d49.1628448821.git.marcel.ziswiler@toradex.com>
+From: Adrian Schmutzler <freifunk@adrianschmutzler.de>
+Date: Wed, 2 Sep 2020 18:51:58 +0200
+Subject: [PATCH] ARM: dts: qcom: add additional DT labels in qcom-ipq8064.dtsi
+
+This adds some additional DT labels which are handy when referring
+to the nodes in derived DTS(I) files. It will also make the
+definitions more consistent, e.g. by adding gsbi2_serial and
+gsbi5_serial where we previously "only" had gsbi4_serial defined.
+
+While at it, add missing spaces after some DT labels and remove one
+useless empty line.
+
+Signed-off-by: Adrian Schmutzler <freifunk@adrianschmutzler.de>
+Link: https://lore.kernel.org/r/20200902165159.7733-1-freifunk@adrianschmutzler.de
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 01f9aba36961..98995ead4413 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -20,7 +20,7 @@ cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "qcom,krait";
+ 			enable-method = "qcom,kpss-acc-v1";
+ 			device_type = "cpu";
+@@ -30,7 +30,7 @@ cpu@0 {
+ 			qcom,saw = <&saw0>;
+ 		};
+ 
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			compatible = "qcom,krait";
+ 			enable-method = "qcom,kpss-acc-v1";
+ 			device_type = "cpu";
+@@ -67,7 +67,7 @@ nss@40000000 {
+ 			no-map;
+ 		};
+ 
+-		smem@41000000 {
++		smem: smem@41000000 {
+ 			reg = <0x41000000 0x200000>;
+ 			no-map;
+ 		};
+@@ -251,7 +251,7 @@ gsbi2: gsbi@12480000 {
+ 
+ 			syscon-tcsr = <&tcsr>;
+ 
+-			serial@12490000 {
++			gsbi2_serial: serial@12490000 {
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x12490000 0x1000>,
+ 				      <0x12480000 0x1000>;
+@@ -273,7 +273,6 @@ i2c@124a0000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 			};
+-
+ 		};
+ 
+ 		gsbi4: gsbi@16300000 {
+@@ -326,7 +325,7 @@ gsbi5: gsbi@1a200000 {
+ 
+ 			syscon-tcsr = <&tcsr>;
+ 
+-			serial@1a240000 {
++			gsbi5_serial: serial@1a240000 {
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x1a240000 0x1000>,
+ 				      <0x1a200000 0x1000>;
+@@ -404,7 +403,7 @@ sata_phy: sata-phy@1b400000 {
+ 			status = "disabled";
+ 		};
+ 
+-		sata@29000000 {
++		sata: sata@29000000 {
+ 			compatible = "qcom,ipq806x-ahci", "generic-ahci";
+ 			reg = <0x29000000 0x180>;
+ 
+@@ -727,7 +726,7 @@ vsdcc_fixed: vsdcc-regulator {
+ 			regulator-always-on;
+ 		};
+ 
+-		sdcc1bam:dma@12402000 {
++		sdcc1bam: dma@12402000 {
+ 			compatible = "qcom,bam-v1.3.0";
+ 			reg = <0x12402000 0x8000>;
+ 			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+@@ -737,7 +736,7 @@ sdcc1bam:dma@12402000 {
+ 			qcom,ee = <0>;
+ 		};
+ 
+-		sdcc3bam:dma@12182000 {
++		sdcc3bam: dma@12182000 {
+ 			compatible = "qcom,bam-v1.3.0";
+ 			reg = <0x12182000 0x8000>;
+ 			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+@@ -747,13 +746,13 @@ sdcc3bam:dma@12182000 {
+ 			qcom,ee = <0>;
+ 		};
+ 
+-		amba {
++		amba: amba {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+ 
+-			sdcc@12400000 {
++			sdcc1: sdcc@12400000 {
+ 				status          = "disabled";
+ 				compatible      = "arm,pl18x", "arm,primecell";
+ 				arm,primecell-periphid = <0x00051180>;
+@@ -773,7 +772,7 @@ sdcc@12400000 {
+ 				dma-names = "tx", "rx";
+ 			};
+ 
+-			sdcc@12180000 {
++			sdcc3: sdcc@12180000 {
+ 				compatible      = "arm,pl18x", "arm,primecell";
+ 				arm,primecell-periphid = <0x00051180>;
+ 				status          = "disabled";
+-- 
+2.31.1
+

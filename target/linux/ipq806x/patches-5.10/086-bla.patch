@@ -1,0 +1,136 @@
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -987,28 +987,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		nand: nand-controller@1ac00000 {
+-			compatible = "qcom,ipq806x-nand";
+-			reg = <0x1ac00000 0x800>;
+-
+-			pinctrl-0 = <&nand_pins>;
+-			pinctrl-names = "default";
+-
+-			clocks = <&gcc EBI2_CLK>,
+-				 <&gcc EBI2_AON_CLK>;
+-			clock-names = "core", "aon";
+-
+-			dmas = <&adm_dma 3>;
+-			dma-names = "rxtx";
+-			qcom,cmd-crci = <15>;
+-			qcom,data-crci = <3>;
+-
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			status = "disabled";
+-		};
+-
+ 		sata: sata@29000000 {
+ 			compatible = "qcom,ipq806x-ahci", "generic-ahci";
+ 			reg = <0x29000000 0x180>;
+@@ -1073,38 +1051,11 @@
+ 			};
+ 		};
+ 
+-		rpm: rpm@108000 {
+-			compatible = "qcom,rpm-ipq8064";
+-			reg = <0x108000 0x1000>;
+-			qcom,ipc = <&l2cc 0x8 2>;
+-
+-			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+-					<GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+-					<GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "ack", "err", "wakeup";
+-
+-			clocks = <&gcc RPM_MSG_RAM_H_CLK>;
+-			clock-names = "ram";
+-
+-			rpmcc: clock-controller {
+-				compatible = "qcom,rpmcc-ipq806x", "qcom,rpmcc";
+-				#clock-cells = <1>;
+-			};
+-		};
+-
+ 		tcsr: syscon@1a400000 {
+ 			compatible = "qcom,tcsr-ipq8064", "syscon";
+ 			reg = <0x1a400000 0x100>;
+ 		};
+ 
+-		l2cc: clock-controller@2011000 {
+-			compatible = "qcom,kpss-gcc", "syscon";
+-			reg = <0x2011000 0x1000>;
+-			clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
+-			clock-names = "pll8_vote", "pxo";
+-			clock-output-names = "acpu_l2_aux";
+-		};
+-
+ 		lcc: clock-controller@28000000 {
+ 			compatible = "qcom,lcc-ipq8064";
+ 			reg = <0x28000000 0x1000>;
+@@ -1486,32 +1437,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		usb3_0: usb3@100f8800 {
+-			compatible = "qcom,dwc3", "syscon";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			reg = <0x100f8800 0x8000>;
+-			clocks = <&gcc USB30_0_MASTER_CLK>;
+-			clock-names = "core";
+-
+-			ranges;
+-
+-			resets = <&gcc USB30_0_MASTER_RESET>;
+-			reset-names = "master";
+-
+-			status = "disabled";
+-
+-			dwc3_0: dwc3@10000000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x10000000 0xcd00>;
+-				interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
+-				phys = <&hs_phy_0>, <&ss_phy_0>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-				dr_mode = "host";
+-				snps,dis_u3_susphy_quirk;
+-			};
+-		};
+-
+ 		hs_phy_1: phy@110f8800 {
+ 			compatible = "qcom,ipq806x-usb-phy-hs";
+ 			reg = <0x110f8800 0x30>;
+@@ -1528,32 +1453,6 @@
+ 			#phy-cells = <0>;
+ 		};
+ 
+-		usb3_1: usb3@110f8800 {
+-			compatible = "qcom,dwc3", "syscon";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			reg = <0x110f8800 0x8000>;
+-			clocks = <&gcc USB30_1_MASTER_CLK>;
+-			clock-names = "core";
+-
+-			ranges;
+-
+-			resets = <&gcc USB30_1_MASTER_RESET>;
+-			reset-names = "master";
+-
+-			status = "disabled";
+-
+-			dwc3_1: dwc3@11000000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x11000000 0xcd00>;
+-				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+-				phys = <&hs_phy_1>, <&ss_phy_1>;
+-				phy-names = "usb2-phy", "usb3-phy";
+-				dr_mode = "host";
+-				snps,dis_u3_susphy_quirk;
+-			};
+-		};
+-
+ 		adm_dma: dma@18300000 {
+ 			compatible = "qcom,adm";
+ 			reg = <0x18300000 0x100000>;

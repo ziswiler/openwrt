@@ -1,0 +1,73 @@
+From 40cf5c884a965554a424797afb424ffbca4c24b3 Mon Sep 17 00:00:00 2001
+Message-Id: <40cf5c884a965554a424797afb424ffbca4c24b3.1628373803.git.marcel.ziswiler@toradex.com>
+From: Jonathan McDowell <noodles@earth.li>
+Date: Thu, 20 May 2021 18:30:08 +0100
+Subject: [PATCH] ARM: dts: qcom: add L2CC and RPM for IPQ8064
+
+This adds the L2CC IPC resource and RPM devices to the IPQ8064 device
+tree.
+
+Tested on a Mikrotik RB3011.
+
+Signed-off-by: Jonathan McDowell <noodles@earth.li>
+Link: https://lore.kernel.org/r/a99eb2a27214b8f41070d7f1faec591e35666b21.1621531633.git.noodles@earth.li
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 239266b55c37dc..7bcf5ef9215751 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -2,6 +2,8 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/mfd/qcom-rpm.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+ #include <dt-bindings/clock/qcom,lcc-ipq806x.h>
+ #include <dt-bindings/gpio/gpio.h>
+@@ -753,11 +755,38 @@ tsens: thermal-sensor@900000 {
+ 			};
+ 		};
+ 
++		rpm: rpm@108000 {
++			compatible = "qcom,rpm-ipq8064";
++			reg = <0x108000 0x1000>;
++			qcom,ipc = <&l2cc 0x8 2>;
++
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ack", "err", "wakeup";
++
++			clocks = <&gcc RPM_MSG_RAM_H_CLK>;
++			clock-names = "ram";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-ipq806x", "qcom,rpmcc";
++				#clock-cells = <1>;
++			};
++		};
++
+ 		tcsr: syscon@1a400000 {
+ 			compatible = "qcom,tcsr-ipq8064", "syscon";
+ 			reg = <0x1a400000 0x100>;
+ 		};
+ 
++		l2cc: clock-controller@2011000 {
++			compatible = "qcom,kpss-gcc", "syscon";
++			reg = <0x2011000 0x1000>;
++			clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++			clock-names = "pll8_vote", "pxo";
++			clock-output-names = "acpu_l2_aux";
++		};
++
+ 		lcc: clock-controller@28000000 {
+ 			compatible = "qcom,lcc-ipq8064";
+ 			reg = <0x28000000 0x1000>;
+-- 
+2.26.2
+

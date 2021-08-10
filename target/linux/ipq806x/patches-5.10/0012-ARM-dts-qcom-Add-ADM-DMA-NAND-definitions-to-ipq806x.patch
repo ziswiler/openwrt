@@ -1,0 +1,111 @@
+From a927e48338c7513a1688d646a292d8a2718a0a88 Mon Sep 17 00:00:00 2001
+Message-Id: <a927e48338c7513a1688d646a292d8a2718a0a88.1628373750.git.marcel.ziswiler@toradex.com>
+From: Jonathan McDowell <noodles@earth.li>
+Date: Thu, 20 May 2021 18:29:39 +0100
+Subject: [PATCH] ARM: dts: qcom: Add ADM DMA + NAND definitions to ipq806x
+
+Now the ADM driver is in mainline add the appropriate definitions for it
+and the NAND controller to get NAND working on IPQ806x platforms,
+
+Signed-off-by: Jonathan McDowell <noodles@earth.li>
+Link: https://lore.kernel.org/r/17f88a26860f5976ad08dd3c12ea079ba474b6fd.1621531633.git.noodles@earth.li
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 67 +++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 98995ead441342..3f666021ff231d 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -185,6 +185,31 @@ mux {
+ 					bias-pull-up;
+ 				};
+ 			};
++
++			nand_pins: nand_pins {
++				mux {
++					pins = "gpio34", "gpio35", "gpio36",
++					       "gpio37", "gpio38", "gpio39",
++					       "gpio40", "gpio41", "gpio42",
++					       "gpio43", "gpio44", "gpio45",
++					       "gpio46", "gpio47";
++					function = "nand";
++					drive-strength = <10>;
++					bias-disable;
++				};
++
++				pullups {
++					pins = "gpio39";
++					bias-pull-up;
++				};
++
++				hold {
++					pins = "gpio40", "gpio41", "gpio42",
++					       "gpio43", "gpio44", "gpio45",
++					       "gpio46", "gpio47";
++					bias-bus-hold;
++				};
++			};
+ 		};
+ 
+ 		intc: interrupt-controller@2000000 {
+@@ -226,6 +251,26 @@ acc1: clock-controller@2098000 {
+ 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
+ 		};
+ 
++		adm_dma: dma-controller@18300000 {
++			compatible = "qcom,adm";
++			reg = <0x18300000 0x100000>;
++			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++
++			clocks = <&gcc ADM0_CLK>, <&gcc ADM0_PBUS_CLK>;
++			clock-names = "core", "iface";
++
++			resets = <&gcc ADM0_RESET>,
++				 <&gcc ADM0_PBUS_RESET>,
++				 <&gcc ADM0_C0_RESET>,
++				 <&gcc ADM0_C1_RESET>,
++				 <&gcc ADM0_C2_RESET>;
++			reset-names = "clk", "pbus", "c0", "c1", "c2";
++			qcom,ee = <0>;
++
++			status = "disabled";
++		};
++
+ 		saw0: regulator@2089000 {
+ 			compatible = "qcom,saw2";
+ 			reg = <0x02089000 0x1000>, <0x02009000 0x1000>;
+@@ -403,6 +448,28 @@ sata_phy: sata-phy@1b400000 {
+ 			status = "disabled";
+ 		};
+ 
++		nand: nand-controller@1ac00000 {
++			compatible = "qcom,ipq806x-nand";
++			reg = <0x1ac00000 0x800>;
++
++			pinctrl-0 = <&nand_pins>;
++			pinctrl-names = "default";
++
++			clocks = <&gcc EBI2_CLK>,
++				 <&gcc EBI2_AON_CLK>;
++			clock-names = "core", "aon";
++
++			dmas = <&adm_dma 3>;
++			dma-names = "rxtx";
++			qcom,cmd-crci = <15>;
++			qcom,data-crci = <3>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		sata: sata@29000000 {
+ 			compatible = "qcom,ipq806x-ahci", "generic-ahci";
+ 			reg = <0x29000000 0x180>;
+-- 
+2.26.2
+

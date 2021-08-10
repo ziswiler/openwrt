@@ -1,0 +1,72 @@
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -740,26 +740,6 @@
+ 			clock-output-names = "acpu1_aux";
+ 		};
+ 
+-		adm_dma: dma-controller@18300000 {
+-			compatible = "qcom,adm";
+-			reg = <0x18300000 0x100000>;
+-			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+-			#dma-cells = <1>;
+-
+-			clocks = <&gcc ADM0_CLK>, <&gcc ADM0_PBUS_CLK>;
+-			clock-names = "core", "iface";
+-
+-			resets = <&gcc ADM0_RESET>,
+-				 <&gcc ADM0_PBUS_RESET>,
+-				 <&gcc ADM0_C0_RESET>,
+-				 <&gcc ADM0_C1_RESET>,
+-				 <&gcc ADM0_C2_RESET>;
+-			reset-names = "clk", "pbus", "c0", "c1", "c2";
+-			qcom,ee = <0>;
+-
+-			status = "disabled";
+-		};
+-
+ 		l2cc: clock-controller@2011000 {
+ 			compatible = "qcom,kpss-gcc", "syscon";
+ 			reg = <0x2011000 0x1000>;
+@@ -1417,42 +1397,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		hs_phy_0: phy@100f8800 {
+-			compatible = "qcom,ipq806x-usb-phy-hs";
+-			reg = <0x100f8800 0x30>;
+-			clocks = <&gcc USB30_0_UTMI_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-
+-			status = "disabled";
+-		};
+-
+-		ss_phy_0: phy@100f8830 {
+-			compatible = "qcom,ipq806x-usb-phy-ss";
+-			reg = <0x100f8830 0x30>;
+-			clocks = <&gcc USB30_0_MASTER_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-
+-			status = "disabled";
+-		};
+-
+-		hs_phy_1: phy@110f8800 {
+-			compatible = "qcom,ipq806x-usb-phy-hs";
+-			reg = <0x110f8800 0x30>;
+-			clocks = <&gcc USB30_1_UTMI_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-		};
+-
+-		ss_phy_1: phy@110f8830 {
+-			compatible = "qcom,ipq806x-usb-phy-ss";
+-			reg = <0x110f8830 0x30>;
+-			clocks = <&gcc USB30_1_MASTER_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-		};
+-
+ 		adm_dma: dma@18300000 {
+ 			compatible = "qcom,adm";
+ 			reg = <0x18300000 0x100000>;

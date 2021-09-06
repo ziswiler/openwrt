@@ -1,0 +1,280 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/* Copyright (c) 2021, Marcel Ziswiler <marcel@ziswiler.com> */
+
+/dts-v1/;
+#include "armada-385.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "Netgear GS110EMX";
+	compatible = "netgear,gs110emx", "marvell,armada385", "marvell,armada380";
+
+	aliases {
+		/* So that mvebu u-boot can update the MAC addresses */
+		ethernet1 = &eth0;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&front_button_pins>;
+		pinctrl-names = "default";
+
+		factory_default {
+			label = "Factory Default";
+			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x00000000 0x08000000>; /* 128 MB */
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "3P3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+	};
+
+	soc {
+		ranges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x19) 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x15) 0 0xf1110000 0x10000
+			  MBUS_ID(0x0c, 0x04) 0 0xf1200000 0x100000>;
+
+		internal-regs {
+			rtc@a3800 {
+				/*
+				 * If the rtc doesn't work, run "date reset"
+				 * twice in u-boot.
+				 */
+				status = "okay";
+			};
+		};
+	};
+};
+
+&eth0 {
+	/* ethernet@70000 */
+        pinctrl-0 = <&ge0_rgmii_pins>;
+        pinctrl-names = "default";
+        phy-mode = "rgmii-id";
+        buffer-manager = <&bm>;
+        bm,pool-long = <0>;
+        bm,pool-short = <1>;
+        status = "okay";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mdio_pins>;
+	status = "okay";
+
+	switch@0 {
+		compatible = "marvell,mv88e6190";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				label = "cpu";
+				ethernet = <&eth0>;
+			};
+
+			port@1 {
+				reg = <1>;
+				label = "lan1";
+				phy-handle = <&switch0phy0>;
+			};
+
+			port@2 {
+				reg = <2>;
+				label = "lan2";
+				phy-handle = <&switch0phy1>;
+			};
+
+			port@3 {
+				reg = <3>;
+				label = "lan3";
+				phy-handle = <&switch0phy2>;
+			};
+
+			port@4 {
+				reg = <4>;
+				label = "lan4";
+				phy-handle = <&switch0phy3>;
+			};
+
+			port@5 {
+				reg = <5>;
+				label = "lan5";
+				phy-handle = <&switch0phy4>;
+			};
+
+			port@6 {
+				reg = <6>;
+				label = "lan6";
+				phy-handle = <&switch0phy5>;
+			};
+
+			port@7 {
+				reg = <7>;
+				label = "lan7";
+				phy-handle = <&switch0phy6>;
+			};
+
+			port@8 {
+				reg = <8>;
+				label = "lan8";
+				phy-handle = <&switch0phy7>;
+			};
+
+			port@9 {
+				/* 88X3310P external phy */
+				reg = <9>;
+				label = "lan9";
+//				phy-handle = <&phy1>;
+//				phy-mode = "xaui";
+
+				fixed-link {
+					speed = <10000>;
+					full-duplex;
+				};
+			};
+
+			port@10 {
+				/* 88X3310P external phy */
+				reg = <10>;
+				label = "lan10";
+//				phy-handle = <&phy2>;
+//				phy-mode = "xaui";
+
+				fixed-link {
+					speed = <10000>;
+					full-duplex;
+				};
+			};
+		};
+
+		mdio {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			switch0phy0: switch0phy0@1 {
+				reg = <0x1>;
+			};
+
+			switch0phy1: switch0phy1@2 {
+				reg = <0x2>;
+			};
+
+			switch0phy2: switch0phy2@3 {
+				reg = <0x3>;
+			};
+
+			switch0phy3: switch0phy3@4 {
+				reg = <0x4>;
+			};
+
+			switch0phy4: switch0phy4@5 {
+				reg = <0x5>;
+			};
+
+			switch0phy5: switch0phy5@6 {
+				reg = <0x6>;
+			};
+
+			switch0phy6: switch0phy6@7 {
+				reg = <0x7>;
+			};
+
+			switch0phy7: switch0phy7@8 {
+				reg = <0x8>;
+			};
+		};
+	};
+
+#if 0
+	phy1: ethernet-phy@1 {
+		reg = <1>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	phy2: ethernet-phy@2 {
+		reg = <2>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	ethernet-phy@3 {
+		reg = <3>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	ethernet-phy@4 {
+		reg = <4>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	ethernet-phy@5 {
+		reg = <5>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	ethernet-phy@6 {
+		reg = <6>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+
+	ethernet-phy@7 {
+		reg = <7>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+	};
+#endif
+};
+
+&pinctrl {
+	front_button_pins: rear-button-pins {
+		marvell,pins = "mpp38";
+		marvell,function = "gpio";
+	};
+};
+
+&spi0 {
+	pinctrl-0 = <&spi0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	spi-flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>; /* Chip select 0 */
+		spi-max-frequency = <3000000>;
+//mtdparts=spi0.0:1m(boot),64k(env),64k(rsv),9m(image0),3m(config),-(debug)";
+	};
+};
+
+&uart0 {
+	pinctrl-0 = <&uart0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};

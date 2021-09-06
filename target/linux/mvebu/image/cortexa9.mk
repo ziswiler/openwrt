@@ -224,6 +224,26 @@ define Device/marvell_axp-gp
 endef
 TARGET_DEVICES += marvell_axp-gp
 
+define Device/netgear_gs110emx
+  $(Device/dsa-migration)
+  DEVICE_VENDOR := Netgear
+  DEVICE_MODEL := GS110EMX
+  KERNEL_INSTALL := 1
+  KERNEL := kernel-bin
+  KERNEL_LOADADDR := 0x00008000
+  DEVICE_DTS := armada-381-netgear-gs110emx
+  KERNEL_INITRAMFS := kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
+  KERNEL_INITRAMFS_SUFFIX := .itb
+  DEVICE_PACKAGES := mkf2fs e2fsprogs partx-utils
+  DEVICE_IMG_NAME = $$(DEVICE_IMG_PREFIX)-$$(2)
+  IMAGES := sdcard.img.gz
+  IMAGE/sdcard.img.gz := boot-scr | boot-img-ext4 | sdcard-img-ext4 | gzip | append-metadata
+  UBOOT := clearfog-u-boot-spl.kwb
+  BOOT_SCRIPT := clearfog
+  SUPPORTED_DEVICES += armada-381-netgear-gs110emx
+endef
+TARGET_DEVICES += netgear_gs110emx
+
 define Device/plathome_openblocks-ax3-4
   DEVICE_VENDOR := Plat'Home
   DEVICE_MODEL := OpenBlocks AX3

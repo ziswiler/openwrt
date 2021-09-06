@@ -650,7 +650,7 @@ define Device/netgear_wac510
 	DEVICE_VENDOR := Netgear
 	DEVICE_MODEL := WAC510
 	SOC := qcom-ipq4018
-	DEVICE_DTS_CONFIG := config@5
+	DEVICE_DTS_CONFIG := config@1
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	IMAGES += nand-factory.tar

@@ -17,7 +17,6 @@ ipq40xx_setup_interfaces()
 	engenius,emr3500|\
 	engenius,ens620ext|\
 	luma,wrtq-329acn|\
-	netgear,wac510|\
 	plasmacloud,pa1200|\
 	plasmacloud,pa2200)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
@@ -105,6 +104,9 @@ ipq40xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "3:lan:2" "4:lan:1"
 		ucidef_set_interface_wan "eth1"
+		;;
+	netgear,wac510)
+		ucidef_set_interface_lan "eth1"
 		;;
 	qxwlan,e2600ac-c1 |\
 	qxwlan,e2600ac-c2)

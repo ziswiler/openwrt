@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-/* Copyright (c) 2020, Robert Marko <robimarko@gmail.com> */
+/* Copyright (c) 2021, Marcel Ziswiler <marcel@ziswiler.com> */
 
 #include "qcom-ipq4019.dtsi"
 #include <dt-bindings/gpio/gpio.h>
@@ -11,15 +11,89 @@
 	compatible = "netgear,wac510";
 
 	aliases {
-		led-boot = &led_power_amber;
-		led-failsafe = &led_power_amber;
-		led-running = &led_power_green;
-		led-upgrade = &led_power_amber;
 		label-mac-device = &gmac0;
+		led-boot = &power_led_amber;
+		led-failsafe = &insight_led_green;
+		led-running = &power_led_green;
+		led-upgrade = &insight_led_blue;
 	};
 
 	chosen {
 		bootargs-append = " root=/dev/ubiblock0_1";
+	};
+
+	keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&reset_pins>;
+		pinctrl-names = "default";
+
+		reset {
+			label = "reset";
+			gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-0 = <&led_pins>;
+		pinctrl-names = "default";
+
+		power_led_amber: power_amber {
+			label = "amber:power";
+			gpios = <&tlmm 22 GPIO_ACTIVE_LOW>;
+			panic-indicator;
+		};
+
+		power_led_green: power_green {
+			label = "green:power";
+			gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
+		};
+
+		insight_led_blue: insight_blue {
+			label = "blue:insight";
+			gpios = <&tlmm 24 GPIO_ACTIVE_LOW>;
+		};
+
+		lan_amber {
+			label = "amber:lan";
+			gpios = <&tlmm 25 GPIO_ACTIVE_LOW>;
+		};
+
+		lan_green {
+			label = "green:lan";
+			gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
+		};
+
+		wlan2g_blue {
+			label = "blue:wlan2g";
+			gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0tpt";
+		};
+
+		wlan5g_blue {
+			label = "blue:wlan5g";
+			gpios = <&tlmm 28 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy1tpt";
+		};
+
+		insight_led_green: insight_green {
+			label = "green:insight";
+			gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
+		};
+
+		wlan2g_green {
+			label = "green:wlan2g";
+			gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0radio";
+		};
+
+		wlan5g_green {
+			label = "green:wlan5g";
+			gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy1radio";
+		};
 	};
 
 	soc {
@@ -38,36 +112,27 @@
 
 		tcsr@1949000 {
 			compatible = "qcom,tcsr";
-			reg = <0x1949000 0x100>;
 			qcom,wifi_glb_cfg = <TCSR_WIFI_GLB_CFG>;
+			reg = <0x1949000 0x100>;
 		};
 
 		tcsr@194b000 {
-			status = "okay";
-
 			compatible = "qcom,tcsr";
-			reg = <0x194b000 0x100>;
 			qcom,usb-hsphy-mode-select = <TCSR_USB_HSPHY_HOST_MODE>;
+			reg = <0x194b000 0x100>;
+			status = "okay";
 		};
 
 		ess_tcsr@1953000 {
 			compatible = "qcom,tcsr";
-			reg = <0x1953000 0x1000>;
 			qcom,ess-interface-select = <TCSR_ESS_PSGMII>;
+			reg = <0x1953000 0x1000>;
 		};
 
 		tcsr@1957000 {
 			compatible = "qcom,tcsr";
-			reg = <0x1957000 0x100>;
 			qcom,wifi_noc_memtype_m0_m2 = <TCSR_WIFI_NOC_MEMTYPE_M0_M2>;
-		};
-
-		usb2: usb2@60f8800 {
-			status = "okay";
-		};
-
-		usb3: usb3@8af8800 {
-			status = "okay";
+			reg = <0x1957000 0x100>;
 		};
 
 		crypto@8e3a000 {
@@ -79,129 +144,17 @@
 		};
 
 		ess-switch@c000000 {
+			switch_lan_bmp = <0x1e>; /* lan port bitmap */
+			switch_mac_mode = <0>; /* PORT_WRAPPER_PSGMII */
+			switch_wan_bmp = <0x20>; /* wan port bitmap */
 			status = "okay";
 		};
 
 		edma@c080000 {
+//			phy-mode = "rgmii-rxid";
+//			qcom,num_gmac = <1>;
+//			qcom,single-phy;
 			status = "okay";
-		};
-	};
-
-	keys {
-		compatible = "gpio-keys";
-
-		reset {
-			label = "reset";
-			gpios = <&tlmm 63 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_RESTART>;
-		};
-	};
-
-	led_spi {
-		compatible = "spi-gpio";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		sck-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
-		mosi-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-		num-chipselects = <0>;
-
-		ssr: ssr@0 {
-			compatible = "fairchild,74hc595";
-			reg = <0>;
-			gpio-controller;
-			#gpio-cells = <2>;
-			registers-number = <1>;
-			spi-max-frequency = <1000000>;
-		};
-	};
-
-	leds {
-		compatible = "gpio-leds";
-
-		led_power_amber: power_amber {
-			label = "amber:power";
-			gpios = <&ssr 6 GPIO_ACTIVE_LOW>;
-			panic-indicator;
-		};
-
-		led_power_green: power_green {
-			label = "green:power";
-			gpios = <&ssr 5 GPIO_ACTIVE_LOW>;
-		};
-
-		wlan2g_blue {
-			label = "blue:wlan2g";
-			gpios = <&ssr 4 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "phy0tpt";
-		};
-
-		wlan2g_green {
-			label = "green:wlan2g";
-			gpios = <&ssr 3 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "phy0radio";
-		};
-
-		wlan5g_blue {
-			label = "blue:wlan5g";
-			gpios = <&ssr 2 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "phy1tpt";
-		};
-
-		wlan5g_green {
-			label = "green:wlan5g";
-			gpios = <&ssr 1 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "phy1radio";
-		};
-
-		act_green {
-			label = "green:act";
-			gpios = <&ssr 0 GPIO_ACTIVE_LOW>;
-		};
-	};
-};
-
-&qpic_bam {
-	status = "okay";
-};
-
-&tlmm {
-	mdio_pins: mdio_pinmux {
-		mux_1 {
-			pins = "gpio53";
-			function = "mdio";
-			bias-pull-up;
-		};
-
-		mux_2 {
-			pins = "gpio52";
-			function = "mdc";
-			bias-pull-up;
-		};
-	};
-
-	serial_pins: serial_pinmux {
-		mux {
-			pins = "gpio60", "gpio61";
-			function = "blsp_uart0";
-			bias-disable;
-		};
-	};
-
-	spi_0_pins: spi_0_pinmux {
-		pinmux {
-			function = "blsp_spi0";
-			pins = "gpio55", "gpio56", "gpio57";
-			drive-strength = <12>;
-			bias-disable;
-		};
-
-		pinmux_cs {
-			function = "gpio";
-			pins = "gpio54", "gpio59";
-			drive-strength = <2>;
-			bias-disable;
-			output-high;
 		};
 	};
 };
@@ -210,132 +163,14 @@
 	status = "okay";
 };
 
-&blsp1_spi1 {
-	status = "okay";
-
-	pinctrl-0 = <&spi_0_pins>;
-	pinctrl-names = "default";
-	cs-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>,
-		   <&tlmm 59 GPIO_ACTIVE_HIGH>;
-
-	flash@0 {
-		compatible = "jedec,spi-nor";
-		spi-max-frequency = <50000000>;
-		reg = <0>;
-
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			partition@0 {
-				label = "0:SBL1";
-				reg = <0x00000000 0x00040000>;
-				read-only;
-			};
-
-			partition@40000 {
-				label = "0:MIBIB";
-				reg = <0x00040000 0x00020000>;
-				read-only;
-			};
-
-			partition@60000 {
-				label = "0:QSEE";
-				reg = <0x00060000 0x00060000>;
-				read-only;
-			};
-
-			partition@c0000 {
-				label = "0:CDT";
-				reg = <0x000c0000 0x00010000>;
-				read-only;
-			};
-
-			partition@d0000 {
-				label = "0:DDRPARAMS";
-				reg = <0x000d0000 0x00010000>;
-				read-only;
-			};
-
-			partition@e0000 {
-				label = "0:APPSBLENV";
-				reg = <0x000e0000 0x00010000>;
-			};
-
-			partition@f0000 {
-				label = "0:APPSBL";
-				reg = <0x000f0000 0x000f0000>;
-				read-only;
-			};
-
-			partition@1e0000 {
-				label = "0:MANUDATA";
-				reg = <0x001e0000 0x00010000>;
-				read-only;
-			};
-
-			partition@1f0000 {
-				label = "0:ART";
-				reg = <0x001f0000 0x00010000>;
-				read-only;
-			};
-		};
-	};
-
-	nand@1 {
-		compatible = "spi-nand";
-		reg = <1>;
-		spi-max-frequency = <48000000>;
-
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			partition@0 {
-				label = "rootfs";
-				reg = <0x00000000 0x03800000>;
-			};
-
-			partition@3800000 {
-				label = "rootfs_1";
-				reg = <0x03800000 0x03800000>;
-			};
-
-			partition@7000000 {
-				label = "var_config";
-				reg = <0x07000000 0x00f00000>;
-				read-only;
-			};
-
-			partition@7f00000 {
-				label = "Oops_log";
-				reg = <0x07f00000 0x000c0000>;
-				read-only;
-			};
-		};
-	};
-};
-
 &blsp1_uart1 {
-	status = "okay";
-
 	pinctrl-0 = <&serial_pins>;
 	pinctrl-names = "default";
+	status = "okay";
 };
 
 &cryptobam {
 	status = "okay";
-};
-
-&mdio {
-	status = "okay";
-
-	pinctrl-0 = <&mdio_pins>;
-	pinctrl-names = "default";
-	reset-gpios = <&tlmm 62 GPIO_ACTIVE_LOW>;
-	reset-delay-us = <2000>;
 };
 
 &gmac0 {
@@ -346,26 +181,174 @@
 	vlan_tag = <1 0x10>;
 };
 
-&wifi0 {
+&mdio {
+	pinctrl-0 = <&mdio_pins>;
+	pinctrl-names = "default";
+	reset-delay-us = <2000>;
+	reset-gpios = <&tlmm 47 GPIO_ACTIVE_LOW>;
+	status = "okay";
+};
+
+&nand {
+	pinctrl-0 = <&nand_pins>;
+	pinctrl-names = "default";
 	status = "okay";
 
+	nand@0 {
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "0:SBL1";
+				reg = <0x00000000 0x00100000>;
+				read-only;
+			};
+
+			partition@100000 {
+				label = "0:MIBIB";
+				reg = <0x00100000 0x00100000>;
+				read-only;
+			};
+
+			partition@200000 {
+				label = "0:BOOTCONFIG";
+				reg = <0x00200000 0x00100000>;
+				read-only;
+			};
+
+			partition@300000 {
+				label = "0:QSEE";
+				reg = <0x00300000 0x00100000>;
+				read-only;
+			};
+
+			partition@400000 {
+				label = "0:CDT";
+				reg = <0x00400000 0x00080000>;
+				read-only;
+			};
+
+			partition@480000 {
+				label = "0:APPSBLENV";
+				reg = <0x00480000 0x00080000>;
+			};
+
+			partition@500000 {
+				label = "0:APPSBL";
+				reg = <0x000500000 0x00200000>;
+				read-only;
+			};
+
+			partition@700000 {
+				label = "0:MANUDATA";
+				reg = <0x00700000 0x00080000>;
+				read-only;
+			};
+
+			partition@780000 {
+				label = "0:ART";
+				reg = <0x00780000 0x00080000>;
+				read-only;
+			};
+
+			partition@800000 {
+				label = "rootfs";
+				reg = <0x00800000 0x03400000>;
+			};
+
+			partition@3c00000 {
+				label = "rootfs_1";
+				reg = <0x03c00000 0x03400000>;
+			};
+
+			partition@7000000 {
+				label = "sys_config_log";
+				reg = <0x07000000 0x00f00000>;
+				read-only;
+			};
+
+			partition@7f00000 {
+				label = "Oops_log";
+				reg = <0x07f00000 0x00080000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&qpic_bam {
+	status = "okay";
+};
+
+&tlmm {
+	led_pins: led_pinmux {
+		mux {
+			pins =	"gpio22", "gpio23", "gpio24", "gpio25",
+				"gpio26", "gpio27", "gpio28", "gpio29",
+				"gpio30", "gpio31";
+			function = "gpio";
+			bias-pull-up;
+		};
+	};
+
+	mdio_pins: mdio_pinmux {
+		mux_1 {
+			pins = "gpio6";
+			function = "mdio";
+			bias-pull-up;
+		};
+
+		mux_2 {
+			pins = "gpio7";
+			function = "mdc";
+			bias-pull-up;
+		};
+	};
+
+	nand_pins: nand_pins {
+		pullups {
+			pins =	"gpio52", "gpio53", "gpio58",
+				"gpio59";
+			function = "qpic";
+			bias-pull-up;
+		};
+
+		pulldowns {
+			pins =	"gpio54", "gpio55", "gpio56",
+				"gpio57", "gpio60", "gpio61",
+				"gpio62", "gpio63", "gpio64",
+				"gpio65", "gpio66", "gpio67",
+				"gpio68", "gpio69";
+			function = "qpic";
+			bias-pull-down;
+		};
+	};
+
+	reset_pins: reset_pinmux {
+		mux {
+			pins = "gpio32";
+			function = "gpio";
+			bias-pull-up;
+		};
+	};
+
+	serial_pins: serial_pinmux {
+		mux {
+			pins = "gpio16", "gpio17";
+			function = "blsp_uart0";
+			bias-disable;
+		};
+	};
+};
+
+&wifi0 {
 	qcom,ath10k-calibration-variant = "Netgear-WAC510";
+	status = "okay";
 };
 
 &wifi1 {
-	status = "okay";
-
 	qcom,ath10k-calibration-variant = "Netgear-WAC510";
-};
-
-&usb3_ss_phy {
-	status = "okay";
-};
-
-&usb3_hs_phy {
-	status = "okay";
-};
-
-&usb2_hs_phy {
 	status = "okay";
 };

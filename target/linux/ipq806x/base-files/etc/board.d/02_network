@@ -40,6 +40,10 @@ ipq806x_setup_interfaces()
 	meraki,mr52)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
 		;;
+	mikrotik,rb3011)
+		ucidef_set_interface_lan "sw2 sw3 sw4 sw5 sw6 sw7 sw8 sw9 sw10"
+		ucidef_set_interface_wan "sw1"
+		;;
 	qcom,ipq8064-ap161)
 		ucidef_set_interface_lan "eth1 eth2 lan1 lan2 lan3 lan4" "wan"
 		;;

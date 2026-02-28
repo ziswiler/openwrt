@@ -115,6 +115,15 @@ define Build/xikestor-nosimg
 	mv $@.new $@
 endef
 
+define Build/xikestor-sks7300-img
+	$(STAGING_DIR_HOST)/bin/sks7300-img \
+		-i $@ \
+		-o $@.new \
+		-n OpenWrt \
+		-v $(VERSION_DIST)$(firstword $(subst +, , $(firstword $(subst -, ,$(REVISION)))))
+	mv $@.new $@
+endef
+
 define Build/zynsig
 	$(STAGING_DIR_HOST)/bin/zynsig -i $@ \
 		-o $@.new

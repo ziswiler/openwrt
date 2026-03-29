@@ -120,6 +120,32 @@ define Device/xikestor_sks7300-4x4t
 endef
 TARGET_DEVICES += xikestor_sks7300-4x4t
 
+define Device/xikestor_sks7300-8gpy4xgs
+  SOC := rtl9302
+  DEVICE_VENDOR := XikeStor
+  DEVICE_MODEL := SKS7300-8GPY4XGS
+  DEVICE_PACKAGES := kmod-hwmon-lm75
+  IMAGE_SIZE := 28160k
+  KERNEL := \
+        kernel-bin | \
+        append-dtb | \
+        lzma
+  KERNEL_INITRAMFS := \
+    kernel-bin | \
+    append-dtb | \
+    lzma |\
+    xikestor-sks7300-img
+  IMAGE/sysupgrade.bin := \
+    append-kernel | \
+    xikestor-sks7300-img | \
+    pad-to 8192k | \
+    append-rootfs | \
+    pad-rootfs | \
+    check-size | \
+    append-metadata
+endef
+TARGET_DEVICES += xikestor_sks7300-8gpy4xgs
+
 define Device/xikestor_sks8300-8t
   SOC := rtl9303
   UIMAGE_MAGIC := 0x93000000

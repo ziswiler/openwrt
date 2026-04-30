@@ -39,6 +39,19 @@ define Device/hasivo_s600wp-5gt-2sx-se
 endef
 TARGET_DEVICES += hasivo_s600wp-5gt-2sx-se
 
+define Device/hasivo_s600wp-5xgt-1s-plus
+  SOC := rtl9303
+  DEVICE_VENDOR := Hasivo
+  DEVICE_MODEL := S600WP-5XGT-1S-PLUS
+  IMAGE_SIZE := 12288k
+  KERNEL_INITRAMFS := \
+       kernel-bin | \
+       append-dtb | \
+       lzma | \
+       uImage lzma
+endef
+TARGET_DEVICES += hasivo_s600wp-5xgt-1s-plus
+
 define Device/plasmacloud-common
   SOC := rtl9302
   UIMAGE_MAGIC := 0x93000000
